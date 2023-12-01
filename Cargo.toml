@@ -1,0 +1,9 @@
+[workspace]
+resolver = "2"
+
+members = ["day-0*"]
+
+[workspace.dependencies]
+rayon = "1.8.0"
+miette = "5.10.0"
+thiserror = "1.0.50"
