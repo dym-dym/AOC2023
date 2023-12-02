@@ -5,7 +5,7 @@ pub fn process(input: &str) -> miette::Result<i64, AocError> {
         "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
     ];
 
-    let replace_by_number = |value| names.iter().position(|x| x == value).unwrap() + 1;
+    let replace_by_number = |value| names.iter().position(|x| x == &value).unwrap() + 1;
 
     Ok(input
         .trim()
@@ -14,8 +14,8 @@ pub fn process(input: &str) -> miette::Result<i64, AocError> {
             let mut values = vec![];
 
             for value in &names {
-                if let Some(index) = elem.find(value) {
-                    values.push((index, replace_by_number(value) as i64));
+                for (index, chain) in elem.match_indices(value) {
+                    values.push((index, replace_by_number(chain) as i64));
                 }
             }
 
@@ -27,7 +27,7 @@ pub fn process(input: &str) -> miette::Result<i64, AocError> {
 
             values.sort();
 
-            println!("{}", 10 * values[0].1 + values[values.len() - 1].1);
+            println!("{:?}", values);
 
             10 * values[0].1 + values[values.len() - 1].1
         })
