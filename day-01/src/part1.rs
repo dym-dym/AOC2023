@@ -1,11 +1,9 @@
-use rayon::prelude::{IndexedParallelIterator, IntoParallelRefIterator, ParallelIterator};
+use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 
 use crate::custom_error::AocError;
 
 pub fn process(input: &str) -> miette::Result<i64, AocError> {
-    let mut res = vec![];
-
-    input
+    Ok(input
         .trim_end()
         .split('\n')
         .map(|x| {
@@ -17,14 +15,11 @@ pub fn process(input: &str) -> miette::Result<i64, AocError> {
         .map(|x| {
             let mut res = String::from(x[0]);
             res.push(x[x.len() - 1]);
-            res
+            res.parse::<i64>().unwrap()
         })
-        .collect::<Vec<String>>()
+        .collect::<Vec<i64>>()
         .par_iter()
-        .map(|x| x.parse::<i64>().unwrap())
-        .collect_into_vec(&mut res);
-
-    Ok(res.par_iter().sum())
+        .sum())
 }
 
 #[cfg(test)]
