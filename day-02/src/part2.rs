@@ -31,13 +31,10 @@ pub fn process(input: &str) -> miette::Result<String, AocError> {
                     }
                 }
             }
-            reds_amount.sort();
-            greens_amount.sort();
-            blues_amount.sort();
 
-            reds_amount.last().unwrap_or(&(1 as u32))
-                * greens_amount.last().unwrap_or(&(1 as u32))
-                * blues_amount.last().unwrap_or(&(1 as u32))
+            reds_amount.into_iter().max().unwrap()
+                * greens_amount.into_iter().max().unwrap()
+                * blues_amount.into_iter().max().unwrap()
         })
         .collect::<Vec<u32>>()
         .into_par_iter()
