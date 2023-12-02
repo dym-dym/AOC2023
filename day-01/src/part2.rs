@@ -26,9 +26,6 @@ pub fn process(input: &str) -> miette::Result<i64, AocError> {
             }
 
             values.sort();
-
-            println!("{:?}", values);
-
             10 * values[0].1 + values[values.len() - 1].1
         })
         .collect::<Vec<i64>>()
