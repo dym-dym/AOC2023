@@ -1,3 +1,8 @@
+use rayon::{
+    iter::{IntoParallelIterator, IntoParallelRefIterator, ParallelIterator},
+    str::ParallelString,
+};
+
 use crate::custom_error::AocError;
 
 pub fn process(input: &str) -> miette::Result<i64, AocError> {
@@ -9,7 +14,8 @@ pub fn process(input: &str) -> miette::Result<i64, AocError> {
 
     Ok(input
         .trim()
-        .split("\n")
+        .par_split('\n')
+        .into_par_iter()
         .map(|elem: &str| {
             let mut values = vec![];
 
@@ -29,7 +35,7 @@ pub fn process(input: &str) -> miette::Result<i64, AocError> {
             10 * values[0].1 + values[values.len() - 1].1
         })
         .collect::<Vec<i64>>()
-        .iter()
+        .par_iter()
         .sum::<i64>())
 }
 
