@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use rayon::{
     iter::{IntoParallelIterator, IntoParallelRefIterator, ParallelIterator},
     str::ParallelString,
@@ -6,11 +8,26 @@ use rayon::{
 use crate::custom_error::AocError;
 
 pub fn process(input: &str) -> miette::Result<i64, AocError> {
-    let names = vec![
-        "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
-    ];
-
-    let replace_by_number = |value| names.iter().position(|x| x == &value).unwrap() + 1;
+    let names = HashMap::from([
+        ("one", 1),
+        ("two", 2),
+        ("three", 3),
+        ("four", 4),
+        ("five", 5),
+        ("six", 6),
+        ("seven", 7),
+        ("eight", 8),
+        ("nine", 9),
+        ("1", 1),
+        ("2", 2),
+        ("3", 3),
+        ("4", 4),
+        ("5", 5),
+        ("6", 6),
+        ("7", 7),
+        ("8", 8),
+        ("9", 9),
+    ]);
 
     Ok(input
         .trim()
@@ -19,15 +36,9 @@ pub fn process(input: &str) -> miette::Result<i64, AocError> {
         .map(|elem: &str| {
             let mut values = vec![];
 
-            for value in &names {
+            for value in names.keys() {
                 for (index, chain) in elem.match_indices(value) {
-                    values.push((index, replace_by_number(chain) as i64));
-                }
-            }
-
-            for (index, character) in elem.chars().enumerate() {
-                if character.is_numeric() {
-                    values.push((index, character.to_string().parse::<i64>().unwrap()));
+                    values.push((index, names[chain]));
                 }
             }
 
