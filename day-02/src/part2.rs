@@ -1,13 +1,18 @@
+use rayon::{
+    iter::{IntoParallelIterator, ParallelIterator},
+    str::ParallelString,
+};
+
 use crate::custom_error::AocError;
 
 pub fn process(input: &str) -> miette::Result<String, AocError> {
     let x: u32 = input
-        .lines()
-        .into_iter()
+        .par_lines()
+        .into_par_iter()
         .map(|line| {
-            let mut reds_amount = vec![1];
-            let mut greens_amount = vec![1];
-            let mut blues_amount = vec![1];
+            let mut reds_amount = vec![];
+            let mut greens_amount = vec![];
+            let mut blues_amount = vec![];
 
             let sub_games = line.trim().split(':').collect::<Vec<&str>>()[1].split(';');
 
@@ -27,16 +32,15 @@ pub fn process(input: &str) -> miette::Result<String, AocError> {
                 }
             }
             reds_amount.sort();
-            reds_amount.reverse();
             greens_amount.sort();
-            greens_amount.reverse();
             blues_amount.sort();
-            blues_amount.reverse();
 
-            reds_amount[0] * greens_amount[0] * blues_amount[0]
+            reds_amount.last().unwrap_or(&(1 as u32))
+                * greens_amount.last().unwrap_or(&(1 as u32))
+                * blues_amount.last().unwrap_or(&(1 as u32))
         })
         .collect::<Vec<u32>>()
-        .into_iter()
+        .into_par_iter()
         .sum();
 
     Ok(x.to_string())
