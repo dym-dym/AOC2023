@@ -8,7 +8,7 @@ use rayon::{
 use crate::custom_error::AocError;
 
 pub fn process(input: &str) -> miette::Result<i64, AocError> {
-    let names = HashMap::from([
+    let mapping = HashMap::from([
         ("one", 1),
         ("two", 2),
         ("three", 3),
@@ -36,9 +36,9 @@ pub fn process(input: &str) -> miette::Result<i64, AocError> {
         .map(|elem: &str| {
             let mut values = vec![];
 
-            for value in names.keys() {
-                for (index, chain) in elem.match_indices(value) {
-                    values.push((index, names[chain]));
+            for key in mapping.keys() {
+                for (index, value) in elem.match_indices(key) {
+                    values.push((index, mapping[value]));
                 }
             }
 
