@@ -16,6 +16,7 @@ struct CharType {
     coordinates: (usize, usize),
 }
 
+// Constructs a CharType off of a character and its coordinates in the grid
 fn filter_value(x: usize, y: usize, character: &char) -> CharType {
     CharType {
         coordinates: (x, y),
@@ -33,6 +34,7 @@ fn filter_value(x: usize, y: usize, character: &char) -> CharType {
     }
 }
 
+// Computes if a character has a symbol in its surrounding
 fn filter_keepable(character: &CharType, symbol_vec: &Vec<(usize, usize)>) -> CharType {
     let x = character.coordinates.0 as i32;
     let y = character.coordinates.1 as i32;
@@ -60,12 +62,14 @@ fn filter_keepable(character: &CharType, symbol_vec: &Vec<(usize, usize)>) -> Ch
     character.clone()
 }
 
-fn do_keep_group(group: &Vec<&CharType>) -> bool {
-    group
+// gives back true if any number in the integer chain is true
+fn do_keep_integer(integer: &Vec<&CharType>) -> bool {
+    integer
         .iter()
         .fold(false, |acc, character| acc || character.keep_group)
 }
 
+// Computes the value of a chain of integer
 fn group_integer(group: &Vec<&CharType>) -> u32 {
     group
         .iter()
@@ -75,15 +79,16 @@ fn group_integer(group: &Vec<&CharType>) -> u32 {
             if let ValueType::Number(value) = character.value {
                 acc + (10 as u32).pow(index as u32) * value as u32
             } else {
-                acc + 0
+                acc
             }
         })
 }
 
+// Flattens groups of integers (a.k.a a line) and gives back their sum
 fn flatten_groups(groups: &Vec<Vec<&CharType>>) -> u32 {
     let mut res = 0;
     for group in groups.iter() {
-        if do_keep_group(group) {
+        if do_keep_integer(group) {
             res = res + group_integer(group);
         }
     }
