@@ -91,6 +91,7 @@ fn flatten_groups(groups: &Vec<Vec<&CharType>>) -> u32 {
 }
 
 pub fn process(input: &str) -> miette::Result<String, AocError> {
+    // Process the grid as a 2d vector of characters
     let grid = input
         .trim()
         .lines()
@@ -102,6 +103,7 @@ pub fn process(input: &str) -> miette::Result<String, AocError> {
         })
         .collect::<Vec<Vec<char>>>();
 
+    // Make that grid into a 2d vector of an easier to process custom type
     let processed_characters = grid
         .iter()
         .enumerate()
@@ -113,16 +115,20 @@ pub fn process(input: &str) -> miette::Result<String, AocError> {
         })
         .collect::<Vec<Vec<CharType>>>();
 
+    // Flattens the 2d vector because coordinates are now encoded into a tuple linked to the value
+    // of the character
     let characters = processed_characters
         .iter()
         .flatten()
         .collect::<Vec<&CharType>>();
 
+    // Gets only the characters that are numbers
     let numbers = characters
         .iter()
         .filter(|x| matches!(x.value, ValueType::Number(_)))
         .collect::<Vec<_>>();
 
+    // Gets only the characters that are Symbols
     let symbols = characters
         .clone()
         .iter()
@@ -130,6 +136,7 @@ pub fn process(input: &str) -> miette::Result<String, AocError> {
         .map(|x| x.coordinates)
         .collect::<Vec<(usize, usize)>>();
 
+    // Processes the numbers to find out which one are next to symbols
     let associated_numbers = numbers
         .into_iter()
         .map(|number| filter_keepable(number, &symbols))
@@ -137,16 +144,19 @@ pub fn process(input: &str) -> miette::Result<String, AocError> {
 
     let mut res = 0;
 
+    // Groups lines together
     for (_, groups) in &associated_numbers
         .into_iter()
         .group_by(|elt| elt.coordinates.0)
     {
         let groups = groups.collect::<Vec<_>>();
+        // Groups contiguous strings of numbers together
         let groups = (&(0..groups.len()).group_by(|&i| groups[i].coordinates.1 as usize - i))
             .into_iter()
             .map(|(_, group)| group.map(|i| &groups[i]).collect::<Vec<_>>())
             .collect::<Vec<Vec<_>>>();
 
+        // Processes the value of each string of number in the line and sums them up
         res = res + flatten_groups(&groups);
     }
 
